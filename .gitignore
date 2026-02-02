@@ -1,0 +1,28 @@
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Test results/logs/reports
+**/TestResults/
+**/*.trx
+**/*.log
+**/Reports/
+**/ErrorLog/
+
+# Selenium/WebDriver binaries
+**/chromedriver*
+**/msedgedriver*
+**/geckodriver*
+
+# VS source control bindings
+*.vspscc
+*.vssscc
+*.scc
