@@ -1,11 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.Generic;
-using SeleniumExtras.PageObjects;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 
 namespace Commons_Automation
@@ -30,7 +26,11 @@ namespace Commons_Automation
             if (timeoutInSeconds > 0)
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
-                return wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(by));
+                return wait.Until(drv =>
+                {
+                    var element = drv.FindElement(by);
+                    return element != null && element.Displayed && element.Enabled ? element : null;
+                });
             }
             return driver.FindElement(by);
         }
@@ -49,7 +49,11 @@ namespace Commons_Automation
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
                 try
                 {
-                    return wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(by));
+                    return wait.Until(drv =>
+                    {
+                        var element = drv.FindElement(by);
+                        return element != null && element.Displayed ? element : null;
+                    });
                 }
 
                 catch (Exception e)
@@ -70,7 +74,22 @@ namespace Commons_Automation
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
                 try
                 {
-                    return wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.InvisibilityOfElementLocated(element));
+                    return wait.Until(drv =>
+                    {
+                        try
+                        {
+                            var target = drv.FindElement(element);
+                            return target == null || !target.Displayed;
+                        }
+                        catch (NoSuchElementException)
+                        {
+                            return true;
+                        }
+                        catch (StaleElementReferenceException)
+                        {
+                            return true;
+                        }
+                    });
                 }
 
                 catch (Exception e)
@@ -90,7 +109,7 @@ namespace Commons_Automation
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
                 try
                 {
-                    return wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(element));
+                    return wait.Until(_ => element.Displayed && element.Enabled ? element : null);
                 }             
                 catch (Exception e)
                 {
